@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 let books = require("./booksdb.js");
 const regd_users = express.Router();
 
-let users = [{"username":"dennis","password":"abc"}];
+let users = [{"username":"Aziz","password":"123456"}];
 
 const isValid = (username)=>{ //returns boolean
 //write code to check is the username is valid
@@ -47,20 +47,20 @@ regd_users.post("/login", (req,res) => {
 
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
-  //Write your code here
-    const isbn = req.params.isbn;
-    const review = req.body.review;
-    const username = req.session.authorization.username;
-    console.log("add review: ", req.params, req.body, req.session);
-    if (books[isbn]) {
-        let book = books[isbn];
-        book.reviews[username] = review;
-        return res.status(200).send("Review successfully posted");
-    }
-    else {
-        return res.status(404).json({message: `ISBN ${isbn} not found`});
-    }
-});
+    //Write your code here
+      const isbn = req.params.isbn;
+      const review = req.body.review;
+      const username = req.session.authorization.username;
+      console.log("add review: ", req.params, req.body, req.session);
+      if (books[isbn]) {
+          let book = books[isbn];
+          book.reviews[username] = review;
+          return res.status(200).send("Review successfully posted");
+      }
+      else {
+          return res.status(404).json({message: `ISBN ${isbn} not found`});
+      }
+  });
 
 regd_users.delete("/auth/review/:isbn", (req, res) => {
   const isbn = req.params.isbn;

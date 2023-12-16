@@ -4,7 +4,20 @@ let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
-public_users.post("/register", (req,res) => {
+
+const doesExist = (username)=>{
+    let userswithsamename = users.filter((user)=>{
+      return user.username === username
+    });
+    if(userswithsamename.length > 0){
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
+  
+  public_users.post("/register", (req,res) => {
     //Write your code here
     const username = req.body.username;
     const password = req.body.password;
@@ -60,35 +73,57 @@ public_users.get('/isbn/:isbn',function (req, res) {
   
  
   // Get book details based on author
-public_users.get('/author/:author',function (req, res) {
+  public_users.get('/author/:author', function (req, res) {
     const author = req.params.author;
-    let output = [];
-    return new Promise((resolve,reject)=>{
-      for (var isbn in books) {
-        let book_ = books[isbn];
-        if (book_.author === author){
-          output.push(book_);
+    return new Promise((resolve, reject) => {
+        let output = {
+            "bookbyauthor": []
+        };
+
+        for (var isbn in books) {
+            let book_ = books[isbn];
+            if (book_.author === author) {
+                output.bookbyauthor.push({
+                    "isbn":isbn,
+                    "title":book_.title,
+                    "reviews":book_.reviews
+                });
+            }
         }
-      }
-      resolve(output);  
+        resolve(output);
     })
-    .then(
-      result =>res.send(JSON.stringify(result, null, 4))
-    );
-  });
+        .then(
+            result => res.json(result, null, 4)
+        );
+});
+
 
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
   //Write your code here
-    const title =req.params.title;
-    return new Promise((resolve,reject)=>{
-      for(var book in books){ 
-        if(books[book].title===title){
-           resolve(books[book])
+    const title =req.params.title; 
+    return new Promise((resolve, reject) => {
+        let output = {
+            "bookbytitle": []
+        };
+
+        for (var isbn in books) {
+            let book_ = books[isbn];
+            if (book_.title === title) {
+                output.bookbytitle.push({
+                    "isbn":isbn,
+                    "author":book_.author,
+                    "reviews":book_.reviews
+                });
+            }
         }
-      }
-    }).then(result=>res.send(JSON.stringify(result,null,4)));
+        resolve(output);
+    })
+        .then(
+            result => res.json(result, null, 4)
+        );
+ 
 });
 
 
